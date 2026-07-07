@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.optimize import minimize
 from osteoclast_model import solve_ode_model
+import matplotlib.pyplot as plt
 
 
 
@@ -37,6 +38,33 @@ result_wo_csf = minimize(ssr, initial, args=(x, yabs))
 no_gamma, no_M = result_wo_csf.x
 
 print(f"WITHOUT CSF: GAMMA = {no_gamma} M = {no_M}")
+
+
+x_smooth = np.linspace(0, 72, 1000)
+
+MC, y_pred_csf = solve_ode_model(csf_gamma, csf_M, 0, x_smooth)
+
+MA, y_pred_no_csf = solve_ode_model(no_gamma, no_M, 0, x_smooth)
+
+
+plt.scatter(x, ypres, label="Data", color="black", s=20)
+plt.plot(x_smooth, y_pred_csf, label="Best fit", color="red")
+plt.xlabel("Time (h)")
+plt.ylabel("Total # Osteoclasts")
+plt.title("Osteoclast Formation in the Presence of CSF")
+plt.legend()
+plt.savefig("formation_with_csf.png")
+plt.close()
+
+
+plt.scatter(x, yabs, label="Data", color="black", s=20)
+plt.plot(x_smooth, y_pred_no_csf, label="Best fit", color="red")
+plt.xlabel("Time (h)")
+plt.ylabel("Total # Osteoclasts")
+plt.title("Osteoclast Formation in the Absence of CSF")
+plt.legend()
+plt.savefig("formation_without_csf.png")
+plt.close()
 
 
 
