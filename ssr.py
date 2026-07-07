@@ -42,9 +42,9 @@ print(f"WITHOUT CSF: GAMMA = {no_gamma} M = {no_M}")
 
 x_smooth = np.linspace(0, 72, 1000)
 
-MC, y_pred_csf = solve_ode_model(csf_gamma, csf_M, 0, x_smooth)
+MC, y_pred_csf = solve_ode_model(csf_gamma, csf_M, 9.824280504908833791e+02, x_smooth)
 
-MA, y_pred_no_csf = solve_ode_model(no_gamma, no_M, 0, x_smooth)
+MA, y_pred_no_csf = solve_ode_model(no_gamma, no_M, 9.824280504908833791e+02, x_smooth)
 
 
 plt.scatter(x, ypres, label="Data", color="black", s=20)
