@@ -1,0 +1,58 @@
+import numpy as np
+from scipy.optimize import minimize
+from model import solve_ode_model
+import matplotlib.pyplot as plt
+
+
+
+
+osteo_absent = np.loadtxt("F4noCSF.csv", delimiter= ",")
+osteo_present = np.loadtxt("F4wCSF.csv", delimiter= ",")
+
+nuclei_absent = np.loadtxt("F5noCSF.csv", delimiter= ",")
+nuclei_present = np.loadtxt("F5wCSF.csv", delimiter= ",")
+
+
+x = [0,4,8,16,24,48,72]
+
+y_osteo_absent = osteo_absent[:,1]
+y_osteo_present = osteo_present[:, 1]
+
+y_nuclei_absent = nuclei_absent[:, 1]
+y_nuclei_present = nuclei_present[:, 1]
+
+
+
+def ssr(params, t, y_total, y_nuclei):
+    gamma = params[0]
+
+    y0 = params[1:]
+
+    solution = solve_ode_model(gamma, y0, t)
+
+    total = np.sum(solution, axis=1)
+    mean_nuclei = np.sum((np.arange(1, 51) * solution), axis = 1) / total
+    
+    resid_osteo = y_total - total
+    resid_nuclei = y_nuclei - mean_nuclei
+
+    return np.sum(resid_osteo**2) + np.sum(resid_nuclei**2)
+
+initial_y0 = np.zeros(50)
+initial_y0[0:10] = 186  
+initial = np.concatenate(([1e-8], initial_y0))
+
+result_csf = minimize(ssr, initial, args=(x, y_osteo_present, y_nuclei_present))
+
+result_absent = minimize(ssr, initial, args=(x, y_osteo_absent, y_nuclei_absent))
+
+csf_gamma = result_csf.x[0]
+csf_y0 = result_csf.x[1:]
+
+absent_gamma = result_absent.x[0]
+absent_y0 = result_absent.x[1:]
+
+print(f"WITH CSF: gamma = {csf_gamma}")
+print(f"WITHOUT CSF: gamma = {absent_gamma}")
+
+

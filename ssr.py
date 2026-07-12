@@ -27,7 +27,7 @@ def ssr(params, t, y):
 
     return np.sum(resid**2)
 
-initial = [1e-5, 9.824280504908833791e+02]
+initial = [1e-4, 500]
 
 result_w_csf = minimize(ssr, initial, args=(x, ypres))
 csf_gamma, csf_M = result_w_csf.x
