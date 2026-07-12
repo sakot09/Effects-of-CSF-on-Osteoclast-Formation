@@ -24,10 +24,12 @@ def ode_model(y, t, gamma):
 
 def solve_ode_model(gamma, y0, t):
 
-
-    solution = odeint(ode_model, y0, t, args=(gamma,), mxstep=5000)
-
-
+    t_dense = np.linspace(0, max(t), 1000)
+    solution_dense = odeint(ode_model, y0, t_dense, args=(gamma,), mxstep=5000)
+    
+    indices = [np.argmin(np.abs(t_dense - time)) for time in t]
+    solution = solution_dense[indices, :]
+    
     return solution
 
 
