@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.optimize import minimize
-from model import solve_ode_model
+from model import solve_ivp_model
 import matplotlib.pyplot as plt
 
 
@@ -24,11 +24,13 @@ y_nuclei_present = nuclei_present[:, 1]
 
 
 def ssr(params, t, y_total, y_nuclei):
+    params = 10**params
+    
     gamma = params[0]
 
     y0 = params[1:]
 
-    solution = solve_ode_model(gamma, y0, t)
+    solution = solve_ivp_model(gamma, y0, t)
 
     total = np.sum(solution, axis=1)
     mean_nuclei = np.sum((np.arange(1, 51) * solution), axis = 1) / total
@@ -38,11 +40,11 @@ def ssr(params, t, y_total, y_nuclei):
 
     return np.sum(resid_osteo**2) + np.sum(resid_nuclei**2)
 
-initial_y0 = np.zeros(50)
-initial_y0[0:10] = 186  
-initial = np.concatenate(([1e-8], initial_y0))
+initial_y0 = np.full(50, 1e-8)
+initial_y0[0] = 186
+initial = np.log10(np.concatenate(([1e-4], initial_y0)))
 
-result_csf = minimize(ssr, initial, args=(x, y_osteo_present, y_nuclei_present))
+result_csf = minimize(ssr, initial, args=(x, y_osteo_present, y_nuclei_present), method='Nelder-Mead')
 
 result_absent = minimize(ssr, initial, args=(x, y_osteo_absent, y_nuclei_absent))
 
@@ -54,5 +56,4 @@ absent_y0 = result_absent.x[1:]
 
 print(f"WITH CSF: gamma = {csf_gamma}")
 print(f"WITHOUT CSF: gamma = {absent_gamma}")
-
 
