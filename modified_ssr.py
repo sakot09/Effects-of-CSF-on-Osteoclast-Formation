@@ -41,6 +41,8 @@ def ssr(params, t, y_total, y_nuclei):
     resid_osteo = y_total - total
     resid_nuclei = y_nuclei - mean_nuclei
 
+    print(f"gamma = {gamma:.2e}, SSR = {np.sum(resid_osteo**2) + np.sum(resid_nuclei**2):.4f}")
+    
     return np.sum(resid_osteo**2) + np.sum(resid_nuclei**2)
 
 initial_y0 = np.full(50, 1e-8)
