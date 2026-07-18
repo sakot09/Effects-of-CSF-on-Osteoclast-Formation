@@ -2,7 +2,11 @@ import numpy as np
 from scipy.integrate import solve_ivp
 
 
+<<<<<<< HEAD
 def ivp_model(y, t, gamma):
+=======
+def ivp_model(t, y, gamma):
+>>>>>>> b8cda375a62a31263e566330b6724178c3afc139
     
 
     dydt = np.zeros(50)
@@ -24,10 +28,18 @@ def ivp_model(y, t, gamma):
 
 def solve_ivp_model(gamma, y0, t):
 
+<<<<<<< HEAD
     solution = solve_ivp(ivp_model, [t[0], t[-1]], y0, args=(gamma,), t_eval=t, method='Radau')    
    
     
     return solution.y.T
+=======
+    
+    solution = solve_ivp(ivp_model, [t[0], t[-1]], y0, args=(gamma,), t_eval=t, method='Radau')
+    
+    
+    return solution
+>>>>>>> b8cda375a62a31263e566330b6724178c3afc139
 
 
 
