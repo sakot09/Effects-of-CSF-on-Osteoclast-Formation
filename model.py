@@ -1,8 +1,8 @@
 import numpy as np
-from scipy.integrate import odeint
+from scipy.integrate import solve_ivp
 
 
-def ode_model(y, t, gamma):
+def ivp_model(t, y, gamma):
     
 
     dydt = np.zeros(50)
@@ -22,13 +22,11 @@ def ode_model(y, t, gamma):
         
 
 
-def solve_ode_model(gamma, y0, t):
+def solve_ivp_model(gamma, y0, t):
 
-    t_dense = np.linspace(0, max(t), 1000)
-    solution_dense = odeint(ode_model, y0, t_dense, args=(gamma,), mxstep=5000)
     
-    indices = [np.argmin(np.abs(t_dense - time)) for time in t]
-    solution = solution_dense[indices, :]
+    solution = solve_ivp(ivp_model, [t[0], t[-1]], y0, args=(gamma,), t_eval=t, method='Radau')
+    
     
     return solution
 
