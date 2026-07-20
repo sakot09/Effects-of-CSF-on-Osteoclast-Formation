@@ -50,17 +50,6 @@ initial_y0 = np.full(50, 1e-8)
 initial_y0[0] = 186
 initial = np.log10(np.concatenate(([1e-4], initial_y0)))
 
-result_csf = minimize(ssr, initial, args=(x, y_osteo_present, y_nuclei_present), method='Nelder-Mead')
-
-result_absent = minimize(ssr, initial, args=(x, y_osteo_absent, y_nuclei_absent))
-
-initial_y0[0] = 186  
-initial = np.log10(np.concatenate(([1e-4], initial_y0)))
-
-
-result_csf = minimize(ssr, initial, args=(x, y_osteo_present, y_nuclei_present), method='Nelder-Mead')
-result_absent = minimize(ssr, initial, args=(x, y_osteo_absent, y_nuclei_absent), method='Nelder-Mead')
-
 result_csf = minimize(ssr, initial, args=(x, y_osteo_present, y_nuclei_present), method='Nelder-Mead', options={"maxiter": 1000}, tol=1e-3)
 result_absent = minimize(ssr, initial, args=(x, y_osteo_absent, y_nuclei_absent), method='Nelder-Mead', options={"maxiter": 1000}, tol=1e-3)
 
