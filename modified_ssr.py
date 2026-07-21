@@ -63,3 +63,6 @@ absent_y0 = result_absent.x[1:]
 print(f"WITH CSF: gamma = {10**csf_gamma}")
 print(f"WITHOUT CSF: gamma = {10**absent_gamma}")
 
+print(result_csf.success)
+print(result_absent.success)
+
