@@ -54,15 +54,47 @@ result_csf = minimize(ssr, initial, args=(x, y_osteo_present, y_nuclei_present),
 result_absent = minimize(ssr, initial, args=(x, y_osteo_absent, y_nuclei_absent), method='Nelder-Mead', options={"maxiter": 1000}, tol=1e-3)
 
 
-csf_gamma = result_csf.x[0]
-csf_y0 = result_csf.x[1:]
+csf_gamma = 10**result_csf.x[0]
+csf_y0 = 10**result_csf.x[1:]
 
-absent_gamma = result_absent.x[0]
-absent_y0 = result_absent.x[1:]
+absent_gamma = 10**result_absent.x[0]
+absent_y0 = 10**result_absent.x[1:]
 
-print(f"WITH CSF: gamma = {10**csf_gamma}")
-print(f"WITHOUT CSF: gamma = {10**absent_gamma}")
+print(f"WITH CSF: gamma = {csf_gamma}")
+print(f"WITHOUT CSF: gamma = {absent_gamma}")
 
 print(result_csf.success)
 print(result_absent.success)
 
+csf_preds = solve_ivp_model(csf_gamma, csf_y0, x)
+
+total_csf = np.sum(csf_preds.y.T, axis=1)
+mean_nuclei_csf = np.sum((np.arange(1, 51) * csf_preds.y.T), axis = 1) / total_csf
+
+absent_preds = solve_ivp_model(absent_gamma, absent_y0, x)
+
+total_absent = np.sum(absent_preds.y.T, axis=1)
+mean_nuclei_absent = np.sum((np.arange(1, 51) * absent_preds.y.T), axis = 1) / total_absent
+
+fig, (ax1, ax2) = plt.subplots(1, 2)
+
+ax1.plot(x, y_osteo_present, 'o', color='blue', label='CSF data')
+ax1.plot(x, total_csf, color='blue', label='CSF model')
+ax1.plot(x, y_osteo_absent, 'o', color='red', label='No CSF data')
+ax1.plot(x, total_absent, color='red', label='No CSF model')
+ax1.set_xlabel('Time (hours)')
+ax1.set_ylabel('Total Osteoclasts')
+ax1.set_title('Figure 4')
+ax1.legend()
+
+ax2.plot(x, y_nuclei_present, 'o', color='blue', label='CSF data')
+ax2.plot(x, mean_nuclei_csf, color='blue', label='CSF model')
+ax2.plot(x, y_nuclei_absent, 'o', color='red', label='No CSF data')
+ax2.plot(x, mean_nuclei_absent, color='red', label='No CSF model')
+ax2.set_xlabel('Time (hours)')
+ax2.set_ylabel('Mean Nuclei per Osteoclast')
+ax2.set_title('Figure 5')
+ax2.legend()
+
+plt.tight_layout()
+plt.show()
